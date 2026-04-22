@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once(__DIR__ . "/../../service/koneksi.php");
+include '../service/koneksi.php';
 
 if (!isset($_SESSION['email']) || $_SESSION['role'] != 'admin') {
     header("Location: ../login.php");

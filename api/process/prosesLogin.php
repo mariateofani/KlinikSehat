@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once(__DIR__ . "/../../service/koneksi.php");
+require_once "../service/koneksi.php";
 
 $email = $_POST['email'];
 $password = $_POST['password'];

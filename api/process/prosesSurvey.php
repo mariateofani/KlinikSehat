@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once(__DIR__ . "/../../service/koneksi.php");
+include "../service/koneksi.php";
 
 // DATA PASIEN
 $nama = $_POST['nama'];
