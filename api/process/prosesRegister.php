@@ -1,0 +1,20 @@
+<?php
+session_start();
+require_once "../service/koneksi.php";
+
+$nama = $_POST['nama'];
+$email = $_POST['email'];
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+$query = "INSERT INTO users (nama, email, password) 
+          VALUES ('$nama', '$email', '$password')";
+
+$result = mysqli_query($koneksi, $query);
+
+if($result){
+    $_SESSION['success'] = "Register berhasil!";
+    header("Location: ../login.php");
+} else {
+    $_SESSION['error'] = "Register gagal!";
+    header("Location: ../register.php");
+}
