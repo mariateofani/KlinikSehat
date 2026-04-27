@@ -5,11 +5,25 @@ require_once __DIR__ . '/../service/koneksi.php';
 $email = $_POST['email'];
 $password = $_POST['password'];
 
+var_dump($email);
+var_dump($password);
+
 $query = "SELECT * FROM users WHERE email='$email'";
 $result = mysqli_query($koneksi, $query);
 $user = mysqli_fetch_assoc($result);
 
+if (!$result) {
+    die(mysqli_error($koneksi));
+}
+
+$user = mysqli_fetch_assoc($result);
+
+var_dump($user);
+
 if ($user) {
+
+    var_dump(password_verify($password, $user['password']));
+    exit;
 
     if (password_verify($password, $user['password'])) {
 
