@@ -7,7 +7,6 @@ $password = $_POST['password'];
 
 $query = "SELECT * FROM users WHERE email='$email'";
 $result = mysqli_query($koneksi, $query);
-
 $user = mysqli_fetch_assoc($result);
 
 if ($user) {

@@ -8,7 +8,6 @@ $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
 $query = "INSERT INTO users (nama, email, password) 
           VALUES ('$nama', '$email', '$password')";
-
 $result = mysqli_query($koneksi, $query);
 
 if($result){
