@@ -1,9 +1,14 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['email']) || !isset($_SESSION['role'])) {
+if (!isset($_SESSION['email'])) {
     header("Location: login.php");
     exit;
+}
+
+// 🔥 FIX: kalau role kosong tetap dianggap user
+if (!isset($_SESSION['role']) || $_SESSION['role'] === NULL) {
+    $_SESSION['role'] = 'user';
 }
 
 if ($_SESSION['role'] !== 'user') {

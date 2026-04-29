@@ -5,17 +5,38 @@ require_once __DIR__ . '/../service/koneksi.php';
 
 $nama     = $_POST['nama'];
 $email    = $_POST['email'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-$role     = "user";
+$password = $_POST['password'];
 
-$query = "INSERT INTO users (nama, email, password, role) 
-          VALUES ('$nama', '$email', '$password', '$role')";
-$result = mysqli_query($koneksi, $query);
+if (empty($nama) || empty($email) || empty($password)) {
+    $_SESSION['error'] = "Semua field wajib diisi!";
+    header("Location: ../register.php");
+    exit;
+}
 
-if($result){
+$hash = password_hash($password, PASSWORD_DEFAULT);
+$role = "user";
+
+// cek email
+$cek = $koneksi->prepare("SELECT id_user FROM users WHERE email=?");
+$cek->bind_param("s", $email);
+$cek->execute();
+$cek->store_result();
+
+if ($cek->num_rows > 0) {
+    $_SESSION['error'] = "Email sudah terdaftar!";
+    header("Location: ../register.php");
+    exit;
+}
+
+// insert
+$stmt = $koneksi->prepare("INSERT INTO users (nama, email, password, role) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $nama, $email, $hash, $role);
+
+if ($stmt->execute()) {
     $_SESSION['success'] = "Register berhasil!";
     header("Location: ../login.php");
 } else {
     $_SESSION['error'] = "Register gagal!";
     header("Location: ../register.php");
 }
+exit;
