@@ -57,3 +57,4 @@ if (mysqli_query($koneksi, $query)) {
 
 header("Location: ../dashboard.php");
 exit;
+?>

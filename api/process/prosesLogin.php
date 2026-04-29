@@ -17,7 +17,6 @@ $user = mysqli_fetch_assoc($result);
 if ($user) {
 
     if (password_verify($password, $user['password'])) {
-
         // SESSION
         $_SESSION['email'] = $user['email'];
         $_SESSION['nama']  = $user['nama'];
@@ -43,3 +42,4 @@ if ($user) {
     header("Location: ../login.php");
     exit;
 }
+?>
