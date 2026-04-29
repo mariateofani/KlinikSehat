@@ -19,4 +19,3 @@ if($result){
     $_SESSION['error'] = "Register gagal!";
     header("Location: ../register.php");
 }
-?>

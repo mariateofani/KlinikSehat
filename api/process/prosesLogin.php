@@ -39,4 +39,3 @@ if ($user) {
     header("Location: ../login.php");
     exit;
 }
-?>
