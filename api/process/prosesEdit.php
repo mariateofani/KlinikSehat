@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../service/koneksi.php';
+include '../service/koneksi.php';
 
 // 🔐 CEK ADMIN
 if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
@@ -38,3 +38,4 @@ if ($stmt->execute()) {
 header("Location: ../dashboard_admin.php");
 exit;
 ?>
+
