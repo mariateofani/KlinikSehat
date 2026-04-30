@@ -208,20 +208,19 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 <section id="grafik" class="max-w-6xl mx-auto mt-10 mb-10">
     <div class="grid md:grid-cols-2 gap-6">
         <div class="bg-white p-4 rounded shadow">
-        <h3 class="font-bold mb-2">Rata-rata per Pertanyaan</h3>
-        <canvas id="chartQ"></canvas>
-         </div>
+            <h3 class="font-bold mb-2">Rata-rata per Pertanyaan</h3>
+            <canvas id="chartQ"></canvas>
+        </div>
 
-  <div class="bg-white p-4 rounded shadow">
-    <h3 class="font-bold mb-2">Distribusi Kepuasan</h3>
-    <canvas id="chartPie"></canvas>
-  </div>
+        <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">Distribusi Kepuasan</h3>
+            <canvas id="chartPie"></canvas>
+        </div>
+    </div>
 
-</div>
-
-<div class="bg-white p-4 rounded shadow mt-6 text-center">
-  <h3 class="font-bold">Total Responden</h3>
-  <p class="text-3xl text-blue-600"><?= $t['total'] ?></p>
+    <div class="bg-white p-4 rounded shadow mt-6 text-center">
+        <h3 class="font-bold">Total Responden</h3>
+        <p class="text-3xl text-blue-600"><?= $t['total'] ?></p>
 </div>
 </section>
 
