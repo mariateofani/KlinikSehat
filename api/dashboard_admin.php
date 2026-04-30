@@ -21,6 +21,25 @@ if ($role !== 'admin') {
 $search = $_GET['search'] ?? "";
 $roleFilter = $_GET['role'] ?? "";
 
+/* DATA USER */
+if ($search != "" || $roleFilter != "") {
+
+    $query = "SELECT * FROM users WHERE 1=1";
+
+    if ($search != "") {
+        $query .= " AND (nama LIKE '%$search%' OR email LIKE '%$search%')";
+    }
+
+    if ($roleFilter != "") {
+        $query .= " AND role='$roleFilter'";
+    }
+
+    $user = mysqli_query($koneksi, $query);
+
+} else {
+    $user = mysqli_query($koneksi, "SELECT * FROM users");
+}
+
 /* DATA SURVEY */
 $data = mysqli_query($koneksi, "SELECT * FROM survey");
 ?>
