@@ -1,9 +1,14 @@
 <?php
-session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-// 🔐 CEK LOGIN ADMIN
-if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
+// 🔐 CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email']) || !isset($_COOKIE['role'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// 🔒 HARUS ADMIN
+if ($_COOKIE['role'] !== 'admin') {
     header("Location: login.php");
     exit;
 }
@@ -11,7 +16,12 @@ if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
 // 🔥 AMBIL ID
 $id = $_GET['id'] ?? 0;
 
-// 🔒 AMBIL DATA (AMAN)
+if (!$id) {
+    header("Location: dashboard_admin.php");
+    exit;
+}
+
+// 🔒 AMBIL DATA USER (AMAN)
 $stmt = $koneksi->prepare("SELECT * FROM users WHERE id_user=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -21,8 +31,10 @@ if (!$data) {
     header("Location: dashboard_admin.php");
     exit;
 }
-?>
 
+// AMBIL NAMA ADMIN
+$namaAdmin = $_COOKIE['nama'] ?? 'Admin';
+?>
 <!doctype html>
 <html>
 <head>
