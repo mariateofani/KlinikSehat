@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../service/koneksi.php';
+require_once __DIR__ . '/service/koneksi.php';
 
 // 🔐 CEK LOGIN DARI COOKIE
 if (!isset($_COOKIE['email']) || !isset($_COOKIE['role'])) {
