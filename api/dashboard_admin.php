@@ -222,6 +222,29 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 $result = mysqli_query($koneksi, "SELECT AVG(total_skor) as rata FROM survey");
 $row = mysqli_fetch_assoc($result);
 $rata = $row['rata'] ? round($row['rata'], 2) : 0;
+
+// 🔥 RATA-RATA PER PERTANYAAN
+$qAvg = mysqli_query($koneksi, "
+    SELECT 
+        AVG(q1) as q1, AVG(q2) as q2, AVG(q3) as q3, AVG(q4) as q4, AVG(q5) as q5,
+        AVG(q6) as q6, AVG(q7) as q7, AVG(q8) as q8, AVG(q9) as q9, AVG(q10) as q10
+    FROM survey
+");
+$q = mysqli_fetch_assoc($qAvg);
+
+// 🔥 DISTRIBUSI KEPUASAN
+$dist = mysqli_query($koneksi, "
+    SELECT
+        SUM(CASE WHEN total_skor <= 20 THEN 1 ELSE 0 END) as rendah,
+        SUM(CASE WHEN total_skor > 20 AND total_skor <= 30 THEN 1 ELSE 0 END) as sedang,
+        SUM(CASE WHEN total_skor > 30 THEN 1 ELSE 0 END) as tinggi
+    FROM survey
+");
+$d = mysqli_fetch_assoc($dist);
+
+// 🔥 TOTAL RESPONDEN
+$total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM survey");
+$t = mysqli_fetch_assoc($total);
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
