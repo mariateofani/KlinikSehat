@@ -221,7 +221,7 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
     <div class="bg-white p-4 rounded shadow mt-6 text-center">
         <h3 class="font-bold">Total Responden</h3>
         <p class="text-3xl text-blue-600"><?= $t['total'] ?></p>
-</div>
+    </div>
 </section>
 
 <?php
@@ -256,26 +256,54 @@ $t = mysqli_fetch_assoc($total);
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-const ctx = document.getElementById('myChart');
+// 🔥 DATA RATA-RATA
+const dataQ = [
+  <?= round($q['q1'],2) ?>,
+  <?= round($q['q2'],2) ?>,
+  <?= round($q['q3'],2) ?>,
+  <?= round($q['q4'],2) ?>,
+  <?= round($q['q5'],2) ?>,
+  <?= round($q['q6'],2) ?>,
+  <?= round($q['q7'],2) ?>,
+  <?= round($q['q8'],2) ?>,
+  <?= round($q['q9'],2) ?>,
+  <?= round($q['q10'],2) ?>
+];
 
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Kepuasan Pasien'],
-        datasets: [{
-            label: 'Rata-rata Skor',
-            data: [<?= $rata ?>],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 40
-            }
-        }
+// 🔥 BAR CHART
+new Chart(document.getElementById('chartQ'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10'],
+    datasets: [{
+      label: 'Rata-rata Skor',
+      data: dataQ,
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 4
+      }
     }
+  }
+});
+
+// 🔥 PIE CHART DISTRIBUSI
+new Chart(document.getElementById('chartPie'), {
+  type: 'pie',
+  data: {
+    labels: ['Rendah', 'Sedang', 'Tinggi'],
+    datasets: [{
+      data: [
+        <?= $d['rendah'] ?>,
+        <?= $d['sedang'] ?>,
+        <?= $d['tinggi'] ?>
+      ]
+    }]
+  }
 });
 </script>
 
