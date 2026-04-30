@@ -1,9 +1,14 @@
 <?php
-session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-// 🔐 CEK ADMIN
-if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
+// 🔐 CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email']) || !isset($_COOKIE['role'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// 🔒 HARUS ADMIN
+if ($_COOKIE['role'] !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
@@ -13,7 +18,7 @@ $id = $_GET['id'] ?? 0;
 
 // VALIDASI
 if (!$id) {
-    $_SESSION['error'] = "ID tidak valid!";
+    setcookie("error", "ID tidak valid!", time() + 5, "/");
     header("Location: ../dashboard_admin.php");
     exit;
 }
@@ -22,10 +27,11 @@ if (!$id) {
 $stmt = $koneksi->prepare("DELETE FROM users WHERE id_user=?");
 $stmt->bind_param("i", $id);
 
+// EKSEKUSI
 if ($stmt->execute()) {
-    $_SESSION['success'] = "User berhasil dihapus!";
+    setcookie("success", "User berhasil dihapus!", time() + 5, "/");
 } else {
-    $_SESSION['error'] = "Gagal hapus user!";
+    setcookie("error", "Gagal hapus user!", time() + 5, "/");
 }
 
 header("Location: ../dashboard_admin.php");
