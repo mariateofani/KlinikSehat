@@ -2,21 +2,32 @@
 session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-if (!isset($_SESSION['email']) || $_SESSION['role'] != 'admin') {
+// 🔐 CEK ADMIN
+if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
 
-$id = $_GET['id'];
+// 🔥 AMBIL ID
+$id = $_GET['id'] ?? 0;
 
-$query = mysqli_query($koneksi, "
-    DELETE FROM users 
-    WHERE id_user='$id'
-");
-
-if ($query) {
-    header("Location: ../dashboard_admin.php?hapus=berhasil");
-} else {
-    echo "Gagal hapus data!";
+// VALIDASI
+if (!$id) {
+    $_SESSION['error'] = "ID tidak valid!";
+    header("Location: ../dashboard_admin.php");
+    exit;
 }
+
+// 🔒 HAPUS DATA (AMAN)
+$stmt = $koneksi->prepare("DELETE FROM users WHERE id_user=?");
+$stmt->bind_param("i", $id);
+
+if ($stmt->execute()) {
+    $_SESSION['success'] = "User berhasil dihapus!";
+} else {
+    $_SESSION['error'] = "Gagal hapus user!";
+}
+
+header("Location: ../dashboard_admin.php");
+exit;
 ?>
