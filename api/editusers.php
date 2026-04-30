@@ -1,15 +1,26 @@
 <?php
 session_start();
 include 'service/koneksi.php';
-if (!isset($_SESSION['email']) || $_SESSION['role'] != 'admin') {
+
+// 🔐 CEK LOGIN ADMIN
+if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
     header("Location: login.php");
     exit;
 }
-$id = $_GET['id'];
 
-$data = mysqli_fetch_assoc(
-    mysqli_query($koneksi, "SELECT * FROM users WHERE id_user='$id'")
-);
+// 🔥 AMBIL ID
+$id = $_GET['id'] ?? 0;
+
+// 🔒 AMBIL DATA (AMAN)
+$stmt = $koneksi->prepare("SELECT * FROM users WHERE id_user=?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$data = $stmt->get_result()->fetch_assoc();
+
+if (!$data) {
+    header("Location: dashboard_admin.php");
+    exit;
+}
 ?>
 
 <!doctype html>
