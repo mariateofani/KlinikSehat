@@ -1,36 +1,25 @@
 <?php
-session_start();
 include 'service/koneksi.php';
 
-if (!isset($_SESSION['email']) || $_SESSION['role'] != 'admin') {
+// 🔐 CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email'])) {
     header("Location: login.php");
     exit;
 }
 
-/* SEARCH (biar tidak error) */
-$search = isset($_GET['search']) ? $_GET['search'] : "";
-$role   = isset($_GET['role']) ? $_GET['role'] : "";
-/* DATA USER */
-if ($search != "" || $role != "") {
+// 🔥 AMBIL DATA COOKIE
+$nama = $_COOKIE['nama'] ?? 'Admin';
+$role = $_COOKIE['role'] ?? 'user';
 
-    $query = "
-        SELECT * FROM users 
-        WHERE 1=1
-    ";
-
-    if ($search != "") {
-        $query .= " AND (nama LIKE '%$search%' OR email LIKE '%$search%')";
-    }
-
-    if ($role != "") {
-        $query .= " AND role='$role'";
-    }
-
-    $user = mysqli_query($koneksi, $query);
-
-} else {
-    $user = mysqli_query($koneksi, "SELECT * FROM users");
+// 🔒 VALIDASI HARUS ADMIN
+if ($role !== 'admin') {
+    header("Location: login.php");
+    exit;
 }
+
+/* SEARCH */
+$search = $_GET['search'] ?? "";
+$roleFilter = $_GET['role'] ?? "";
 
 /* DATA SURVEY */
 $data = mysqli_query($koneksi, "SELECT * FROM survey");
