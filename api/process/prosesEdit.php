@@ -2,26 +2,39 @@
 session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-if (!isset($_SESSION['email']) || $_SESSION['role'] != 'admin') {
+// 🔐 CEK ADMIN
+if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
 
-$id    = $_POST['id'];
-$nama  = $_POST['nama'];
-$email = $_POST['email'];
-$role  = $_POST['role'];
+// 🔥 AMBIL DATA
+$id    = $_POST['id'] ?? null;
+$nama  = $_POST['nama'] ?? '';
+$email = $_POST['email'] ?? '';
+$role  = $_POST['role'] ?? 'user';
 
-// UPDATE (pakai id_user atau id)
-$query = mysqli_query($koneksi, "
-    UPDATE users 
-    SET nama='$nama', email='$email', role='$role'
-    WHERE id_user='$id'
-");
-
-if ($query) {
-    header("Location: ../dashboard_admin.php?edit=berhasil");
-} else {
-    echo "Gagal update data!";
+// VALIDASI
+if (!$id || $nama == '' || $email == '') {
+    $_SESSION['error'] = "Data tidak lengkap!";
+    header("Location: ../dashboard_admin.php");
+    exit;
 }
+
+// 🔒 UPDATE (AMAN)
+$stmt = $koneksi->prepare("
+    UPDATE users 
+    SET nama=?, email=?, role=? 
+    WHERE id_user=?
+");
+$stmt->bind_param("sssi", $nama, $email, $role, $id);
+
+if ($stmt->execute()) {
+    $_SESSION['success'] = "User berhasil diupdate!";
+} else {
+    $_SESSION['error'] = "Gagal update user!";
+}
+
+header("Location: ../dashboard_admin.php");
+exit;
 ?>
