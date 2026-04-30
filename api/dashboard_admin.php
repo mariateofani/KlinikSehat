@@ -60,7 +60,7 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 
     <div class="flex items-center gap-4">
       <span class="text-gray-600">
-        Halo, <b><?= $_SESSION['nama']; ?></b>
+        Halo, <b><?= $nama; ?></b>
       </span>
 
       <a href="logout.php" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
@@ -76,7 +76,7 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 
     <div>
       <h1 class="text-4xl font-bold text-blue-700 mb-6">
-        Halo Admin: <?= $_SESSION['nama']; ?>
+        Halo Admin: <?= $nama; ?>
       </h1>
 
       <p class="text-gray-600 mb-6">
@@ -84,7 +84,6 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
       </p>
 
       <div class="flex gap-3">
-
         <a href="#user" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
           Kelola User
         </a>
@@ -111,12 +110,12 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 <form method="GET" class="mb-4 flex gap-2">
 
   <input type="text" name="search" placeholder="Cari nama/email..."
-    class="border p-2 rounded w-64">
+    class="border p-2 rounded w-64" value="<?= $search ?>">
 
   <select name="role" class="border p-2 rounded">
     <option value="">Semua Role</option>
-    <option value="admin">Admin</option>
-    <option value="user">User</option>
+    <option value="admin" <?= $roleFilter=='admin'?'selected':'' ?>>Admin</option>
+    <option value="user" <?= $roleFilter=='user'?'selected':'' ?>>User</option>
   </select>
 
   <button class="bg-blue-500 text-white px-4 py-2 rounded">
@@ -124,6 +123,7 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
   </button>
 
 </form>
+
   <div class="bg-white p-6 rounded shadow">
     <h2 class="text-xl font-bold mb-4">Kelola User</h2>
 
@@ -138,28 +138,25 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 
       <?php while($u = mysqli_fetch_assoc($user)) { ?>
       <tr class="border-t">
-        <td class="p-2"><?php echo $u['id_user'] ?? $u['id_user'] ?></td>
-        <td class="p-2"><?php echo $u['nama'] ?></td>
-        <td class="p-2"><?php echo $u['email'] ?></td>
-        <td class="p-2"><?php echo $u['role'] ?></td>
+        <td class="p-2"><?= $u['id_user'] ?? $u['id'] ?></td>
+        <td class="p-2"><?= $u['nama'] ?></td>
+        <td class="p-2"><?= $u['email'] ?></td>
+        <td class="p-2"><?= $u['role'] ?></td>
         <td class="p-2">
 
-          <!-- EDIT -->
-          <a href="editusers.php?id=<?= $u['id_user'] ?? $u['id'] ?>" 
-             class="text-blue-500">
-             Edit
+          <a href="editusers.php?id=<?= $u['id_user'] ?? $u['id'] ?>" class="text-blue-500">
+            Edit
           </a>
 
-          <!-- HAPUS -->
-          <a href="process/prosesHapus.php?id=<?= $u['id_user'] ?? $u['id'] ?>" 
+          <a href="process/prosesHapus.php?id=<?= $u['id_user'] ?? $u['id'] ?>"
              class="text-red-500 ml-2"
              onclick="return confirm('Yakin ingin hapus user ini?')">
-             Hapus
+            Hapus
           </a>
 
         </td>
       </tr>
-<?php } ?>
+      <?php } ?>
     </table>
   </div>
 </section>
@@ -195,7 +192,7 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
         <?php } ?>
     <?php } else { ?>
     <tr>
-        <td colspan="5" class="text-center p-4 text-gray-500">
+        <td colspan="6" class="text-center p-4 text-gray-500">
             Tidak ada data survey
         </td>
     </tr>
@@ -213,7 +210,6 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
   <div class="bg-white p-6 rounded shadow">
     <h2 class="text-xl font-bold mb-4">Grafik Kepuasan</h2>
 
-    <!-- CANVAS GRAFIK -->
     <canvas id="myChart" class="mb-4"></canvas>
 
     <p class="text-gray-600">
@@ -223,13 +219,11 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 </section>
 
 <?php
-// ambil rata-rata skor dari database
 $result = mysqli_query($koneksi, "SELECT AVG(total_skor) as rata FROM survey");
 $row = mysqli_fetch_assoc($result);
 $rata = $row['rata'] ? round($row['rata'], 2) : 0;
 ?>
 
-<!-- CDN Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
