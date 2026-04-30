@@ -1,20 +1,20 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['email'])) {
+// ✅ CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email'])) {
     header("Location: login.php");
     exit;
 }
 
-// 🔥 FIX: kalau role kosong tetap dianggap user
-if (!isset($_SESSION['role']) || $_SESSION['role'] === NULL) {
-    $_SESSION['role'] = 'user';
-}
+// 🔥 FIX ROLE
+$role = $_COOKIE['role'] ?? 'user';
 
-if ($_SESSION['role'] !== 'user') {
+if ($role !== 'user') {
     header("Location: login.php");
     exit;
 }
+
+// AMBIL DATA
+$nama = $_COOKIE['nama'] ?? 'User';
 ?>
 <?php if (isset($_SESSION['success'])) { ?>
     <div class="bg-green-500 text-white p-3 rounded-lg mb-4 text-center">
