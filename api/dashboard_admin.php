@@ -206,104 +206,47 @@ $data = mysqli_query($koneksi, "SELECT * FROM survey");
 <!-- GRAFIK -->
 <!-- ===================== -->
 <section id="grafik" class="max-w-6xl mx-auto mt-10 mb-10">
-    <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-white p-4 rounded shadow">
-            <h3 class="font-bold mb-2">Rata-rata per Pertanyaan</h3>
-            <canvas id="chartQ"></canvas>
-        </div>
 
-        <div class="bg-white p-4 rounded shadow">
-            <h3 class="font-bold mb-2">Distribusi Kepuasan</h3>
-            <canvas id="chartPie"></canvas>
-        </div>
-    </div>
+  <div class="bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-bold mb-4">Grafik Kepuasan</h2>
 
-    <div class="bg-white p-4 rounded shadow mt-6 text-center">
-        <h3 class="font-bold">Total Responden</h3>
-        <p class="text-3xl text-blue-600"><?= $t['total'] ?></p>
-    </div>
+    <canvas id="myChart" class="mb-4"></canvas>
+
+    <p class="text-gray-600">
+      Grafik menampilkan rata-rata kepuasan dari hasil survey.
+    </p>
+  </div>
 </section>
 
 <?php
 $result = mysqli_query($koneksi, "SELECT AVG(total_skor) as rata FROM survey");
 $row = mysqli_fetch_assoc($result);
 $rata = $row['rata'] ? round($row['rata'], 2) : 0;
-
-// 🔥 RATA-RATA PER PERTANYAAN
-$qAvg = mysqli_query($koneksi, "
-    SELECT 
-        AVG(q1) as q1, AVG(q2) as q2, AVG(q3) as q3, AVG(q4) as q4, AVG(q5) as q5,
-        AVG(q6) as q6, AVG(q7) as q7, AVG(q8) as q8, AVG(q9) as q9, AVG(q10) as q10
-    FROM survey
-");
-$q = mysqli_fetch_assoc($qAvg);
-
-// 🔥 DISTRIBUSI KEPUASAN
-$dist = mysqli_query($koneksi, "
-    SELECT
-        SUM(CASE WHEN total_skor <= 20 THEN 1 ELSE 0 END) as rendah,
-        SUM(CASE WHEN total_skor > 20 AND total_skor <= 30 THEN 1 ELSE 0 END) as sedang,
-        SUM(CASE WHEN total_skor > 30 THEN 1 ELSE 0 END) as tinggi
-    FROM survey
-");
-$d = mysqli_fetch_assoc($dist);
-
-// 🔥 TOTAL RESPONDEN
-$total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM survey");
-$t = mysqli_fetch_assoc($total);
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// 🔥 DATA RATA-RATA
-const dataQ = [
-  <?= round($q['q1'],2) ?>,
-  <?= round($q['q2'],2) ?>,
-  <?= round($q['q3'],2) ?>,
-  <?= round($q['q4'],2) ?>,
-  <?= round($q['q5'],2) ?>,
-  <?= round($q['q6'],2) ?>,
-  <?= round($q['q7'],2) ?>,
-  <?= round($q['q8'],2) ?>,
-  <?= round($q['q9'],2) ?>,
-  <?= round($q['q10'],2) ?>
-];
+const ctx = document.getElementById('myChart');
 
-// 🔥 BAR CHART
-new Chart(document.getElementById('chartQ'), {
-  type: 'bar',
-  data: {
-    labels: ['Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10'],
-    datasets: [{
-      label: 'Rata-rata Skor',
-      data: dataQ,
-      borderWidth: 1
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 4
-      }
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Kepuasan Pasien'],
+        datasets: [{
+            label: 'Rata-rata Skor',
+            data: [<?= $rata ?>],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 40
+            }
+        }
     }
-  }
-});
-
-// 🔥 PIE CHART DISTRIBUSI
-new Chart(document.getElementById('chartPie'), {
-  type: 'pie',
-  data: {
-    labels: ['Rendah', 'Sedang', 'Tinggi'],
-    datasets: [{
-      data: [
-        <?= $d['rendah'] ?>,
-        <?= $d['sedang'] ?>,
-        <?= $d['tinggi'] ?>
-      ]
-    }]
-  }
 });
 </script>
 
