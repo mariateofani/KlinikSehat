@@ -1,9 +1,14 @@
 <?php
-session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-// 🔐 CEK ADMIN
-if (!isset($_SESSION['email']) || ($_SESSION['role'] ?? '') !== 'admin') {
+// 🔐 CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email']) || !isset($_COOKIE['role'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// 🔒 HARUS ADMIN
+if ($_COOKIE['role'] !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
@@ -16,7 +21,7 @@ $role  = $_POST['role'] ?? 'user';
 
 // VALIDASI
 if (!$id || $nama == '' || $email == '') {
-    $_SESSION['error'] = "Data tidak lengkap!";
+    setcookie("error", "Data tidak lengkap!", time() + 5, "/");
     header("Location: ../dashboard_admin.php");
     exit;
 }
@@ -29,13 +34,13 @@ $stmt = $koneksi->prepare("
 ");
 $stmt->bind_param("sssi", $nama, $email, $role, $id);
 
+// EKSEKUSI
 if ($stmt->execute()) {
-    $_SESSION['success'] = "User berhasil diupdate!";
+    setcookie("success", "User berhasil diupdate!", time() + 5, "/");
 } else {
-    $_SESSION['error'] = "Gagal update user!";
+    setcookie("error", "Gagal update user!", time() + 5, "/");
 }
 
 header("Location: ../dashboard_admin.php");
 exit;
 ?>
-
