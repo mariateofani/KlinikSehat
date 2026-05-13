@@ -417,7 +417,7 @@ if (($_GET['export'] ?? '') === 'csv') {
                       $roleLabel = match($u['role']) {
                         'admin'   => '🔴 Admin',
                         'manager' => '🟠 Manager',
-                        default   => '🟢 Pasien',
+                        default   => '🟢 User',
                       };
               ?>
               <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
