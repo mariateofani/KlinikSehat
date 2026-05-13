@@ -1,7 +1,8 @@
 <?php
-session_start();
-session_unset(); 
-session_destroy();
-header("Location: ../index.html");
+setcookie("email", "", time() - 3600, "/");
+setcookie("nama", "", time() - 3600, "/");
+setcookie("role", "", time() - 3600, "/");
+
+header("Location: login.php");
 exit;
 ?>

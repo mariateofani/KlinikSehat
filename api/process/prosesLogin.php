@@ -1,6 +1,5 @@
 <?php
 ob_start();
-session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
 $email    = $_POST['email'];
@@ -16,11 +15,33 @@ if ($user) {
 
     if (password_verify($password, $user['password'])) {
 
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['nama']  = $user['nama'];
-        $_SESSION['role']  = $user['role'] ?? 'user';
+        // 🔐 SET COOKIE LOGIN
+        setcookie("email", $user['email'], [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+        ]);
 
-        if ($_SESSION['role'] === 'admin') {
+        setcookie("nama", $user['nama'], [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+        ]);
+
+        setcookie("role", $user['role'] ?? 'user', [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+        ]);
+
+        // 🔀 REDIRECT BERDASARKAN ROLE
+        if (($user['role'] ?? 'user') === 'admin') {
             header("Location: ../dashboard_admin.php");
         } else {
             header("Location: ../dashboard.php");
@@ -28,13 +49,16 @@ if ($user) {
         exit;
 
     } else {
-        $_SESSION['error'] = "Password salah!";
+        // ❌ ERROR PASSWORD
+        setcookie("error", "Password salah!", time() + 5, "/");
         header("Location: ../login.php");
         exit;
     }
 
 } else {
-    $_SESSION['error'] = "Email tidak ditemukan!";
+    // ❌ ERROR EMAIL
+    setcookie("error", "Email tidak ditemukan!", time() + 5, "/");
     header("Location: ../login.php");
     exit;
 }
+?>

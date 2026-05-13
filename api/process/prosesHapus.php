@@ -1,22 +1,39 @@
 <?php
-session_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-if (!isset($_SESSION['email']) || $_SESSION['role'] != 'admin') {
+// 🔐 CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email']) || !isset($_COOKIE['role'])) {
     header("Location: ../login.php");
     exit;
 }
 
-$id = $_GET['id'];
-
-$query = mysqli_query($koneksi, "
-    DELETE FROM users 
-    WHERE id_user='$id'
-");
-
-if ($query) {
-    header("Location: ../dashboard_admin.php?hapus=berhasil");
-} else {
-    echo "Gagal hapus data!";
+// 🔒 HARUS ADMIN
+if ($_COOKIE['role'] !== 'admin') {
+    header("Location: ../login.php");
+    exit;
 }
+
+// 🔥 AMBIL ID
+$id = $_GET['id'] ?? 0;
+
+// VALIDASI
+if (!$id) {
+    setcookie("error", "ID tidak valid!", time() + 5, "/");
+    header("Location: ../dashboard_admin.php");
+    exit;
+}
+
+// 🔒 HAPUS DATA (AMAN)
+$stmt = $koneksi->prepare("DELETE FROM users WHERE id_user=?");
+$stmt->bind_param("i", $id);
+
+// EKSEKUSI
+if ($stmt->execute()) {
+    setcookie("success", "User berhasil dihapus!", time() + 5, "/");
+} else {
+    setcookie("error", "Gagal hapus user!", time() + 5, "/");
+}
+
+header("Location: ../dashboard_admin.php");
+exit;
 ?>

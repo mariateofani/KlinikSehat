@@ -1,32 +1,31 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['email'])) {
+// 🔐 CEK LOGIN DARI COOKIE
+if (!isset($_COOKIE['email'])) {
     header("Location: login.php");
     exit;
 }
 
-// 🔥 FIX: kalau role kosong tetap dianggap user
-if (!isset($_SESSION['role']) || $_SESSION['role'] === NULL) {
-    $_SESSION['role'] = 'user';
-}
+// 🔥 AMBIL DATA DARI COOKIE
+$nama = $_COOKIE['nama'] ?? 'User';
+$role = $_COOKIE['role'] ?? 'user';
 
-if ($_SESSION['role'] !== 'user') {
+// 🔒 VALIDASI ROLE
+if ($role !== 'user') {
     header("Location: login.php");
     exit;
 }
 ?>
-<?php if (isset($_SESSION['success'])) { ?>
+<?php if (isset($_COOKIE['success'])) { ?>
     <div class="bg-green-500 text-white p-3 rounded-lg mb-4 text-center">
-        <?= $_SESSION['success']; ?>
+        <?= $_COOKIE['success']; ?>
     </div>
-<?php unset($_SESSION['success']); } ?>
+<?php setcookie("success", "", time() - 3600, "/"); } ?>
 
-<?php if (isset($_SESSION['error'])) { ?>
+<?php if (isset($_COOKIE['error'])) { ?>
     <div class="bg-red-500 text-white p-3 rounded-lg mb-4 text-center">
-        <?= $_SESSION['error']; ?>
+        <?= $_COOKIE['error']; ?>
     </div>
-<?php unset($_SESSION['error']); } ?>
+<?php setcookie("error", "", time() - 3600, "/"); } ?>
 
 <!DOCTYPE html>
 <html lang="id">
@@ -45,7 +44,7 @@ if ($_SESSION['role'] !== 'user') {
 
     <div class="flex items-center gap-4">
       <span class="text-gray-600">
-        Halo, <b><?= $_SESSION['nama']; ?></b>
+        Halo, <b><?= $nama; ?></b>
       </span>
 
       <a href="logout.php" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
@@ -62,7 +61,7 @@ if ($_SESSION['role'] !== 'user') {
     <div>
       <h1 class="text-4xl font-bold text-blue-700 mb-6">
         Selamat Datang di Layanan Kesehatan Digital, 
-        <span class="text-blue-900"><?= $_SESSION['nama']; ?></span>
+        <span class="text-blue-900"><?= $nama; ?></span>
       </h1>
 
       <p class="text-gray-600 mb-6">
@@ -114,7 +113,6 @@ if ($_SESSION['role'] !== 'user') {
 
   </div>
 
-  <!-- 🔥 BUTTON SURVEY -->
   <div class="text-center mt-10">
     <a href="survey.php"
        class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition">
@@ -159,6 +157,3 @@ if ($_SESSION['role'] !== 'user') {
 <footer class="text-center p-6 text-gray-500">
   © 2026 Klinik Sehat Digital
 </footer>
-
-</body>
-</html>
