@@ -9,54 +9,44 @@ $stmt = $koneksi->prepare("SELECT * FROM users WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user   = $result->fetch_assoc();
 
 if ($user) {
 
     if (password_verify($password, $user['password'])) {
 
+        $role = $user['role'] ?? 'user';
+
         // 🔐 SET COOKIE LOGIN
-        setcookie("email", $user['email'], [
-            'expires' => time() + 3600,
-            'path' => '/',
-            'secure' => true,
+        $cookie_opts = [
+            'expires'  => time() + 3600,
+            'path'     => '/',
+            'secure'   => true,
             'httponly' => true,
             'samesite' => 'None'
-        ]);
+        ];
 
-        setcookie("nama", $user['nama'], [
-            'expires' => time() + 3600,
-            'path' => '/',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'None'
-        ]);
-
-        setcookie("role", $user['role'] ?? 'user', [
-            'expires' => time() + 3600,
-            'path' => '/',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'None'
-        ]);
+        setcookie("email", $user['email'], $cookie_opts);
+        setcookie("nama",  $user['nama'],  $cookie_opts);
+        setcookie("role",  $role,          $cookie_opts);
 
         // 🔀 REDIRECT BERDASARKAN ROLE
-        if (($user['role'] ?? 'user') === 'admin') {
+        if ($role === 'admin') {
             header("Location: ../dashboard_admin.php");
+        } elseif ($role === 'manager') {
+            header("Location: ../dashboard_manager.php");
         } else {
             header("Location: ../dashboard.php");
         }
         exit;
 
     } else {
-        // ❌ ERROR PASSWORD
         setcookie("error", "Password salah!", time() + 5, "/");
         header("Location: ../login.php");
         exit;
     }
 
 } else {
-    // ❌ ERROR EMAIL
     setcookie("error", "Email tidak ditemukan!", time() + 5, "/");
     header("Location: ../login.php");
     exit;

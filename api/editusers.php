@@ -86,6 +86,10 @@ $namaAdmin = $_COOKIE['nama'] ?? 'Admin';
                     User
                 </option>
 
+                <option value="manager" <?= $data['role']=='manager'?'selected':'' ?>>
+                    Manager
+                </option>
+
             </select>
         </div>
 
