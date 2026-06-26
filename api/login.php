@@ -11,22 +11,9 @@ if ($error) {
 }
 ?>
 
-<!-- Success -->
-<?php if($success) { ?>
-<div class="w-full bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-lg mb-5 text-sm text-center">
-    <?= htmlspecialchars($success) ?>
-</div>
-<?php } ?>
-
-<!-- Error -->
-<?php if($error) { ?>
-<div class="w-full bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm text-center">
-    <?= htmlspecialchars($error) ?>
-</div>
-<?php } ?>
-
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Login Aplikasi</title>
@@ -45,18 +32,18 @@ if ($error) {
         </h2>
 
         <!-- Success -->
-        <?php if(isset($_SESSION['success'])) { ?>
+        <?php if ($success) { ?>
             <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm">
-                <?= $_SESSION['success']; ?>
+                <?= htmlspecialchars($success) ?>
             </div>
-        <?php unset($_SESSION['success']); } ?>
+        <?php } ?>
 
         <!-- Error -->
-        <?php if(isset($_SESSION['error'])) { ?>
+        <?php if ($error) { ?>
             <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
-                <?= $_SESSION['error']; ?>
+                <?= htmlspecialchars($error) ?>
             </div>
-        <?php unset($_SESSION['error']); } ?>
+        <?php } ?>
 
         <!-- Form -->
         <form action="process/prosesLogin.php" method="POST">
@@ -64,14 +51,9 @@ if ($error) {
             <!-- Email -->
             <div class="mb-4">
                 <label class="block text-gray-700 mb-1">Alamat Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    placeholder="Masukkan email Anda"
+                <input type="email" id="email" name="email" placeholder="Masukkan email Anda"
                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                    required
-                >
+                    required>
             </div>
 
             <!-- Password -->
@@ -79,38 +61,28 @@ if ($error) {
                 <label class="block text-gray-700 mb-1">Password</label>
 
                 <div class="relative">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        placeholder="Masukkan password Anda"
+                    <input type="password" id="password" name="password" placeholder="Masukkan password Anda"
                         class="w-full px-4 py-2 border rounded-lg pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                        required
-                    >
+                        required>
 
                     <!-- Eye button -->
-                    <button 
-                        type="button" 
-                        onclick="togglePassword()" 
-                        class="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
-                    >
+                    <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700">
                         👁
                     </button>
                 </div>
             </div>
 
             <!-- Button -->
-            <button 
-                type="submit" 
-                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md"
-            >
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">
                 Login
             </button>
         </form>
 
         <!-- Footer -->
         <div class="text-center text-sm text-gray-600 mt-6">
-            Belum punya akun? 
+            Belum punya akun?
             <a href="register.php" class="text-blue-600 hover:underline font-medium">
                 Daftar di sini
             </a>
@@ -132,4 +104,5 @@ if ($error) {
     </script>
 
 </body>
+
 </html>

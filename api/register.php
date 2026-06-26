@@ -6,22 +6,9 @@ if ($error) {
 }
 ?>
 
-<!-- Alert Error -->
-<?php if($error) { ?>
-<div class="w-full bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm text-center">
-    <?= htmlspecialchars($error) ?>
-</div>
-<?php } ?>
-
-<!-- Alert Success -->
-<?php if($success) { ?>
-<div class="w-full bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-lg mb-5 text-sm text-center">
-    <?= htmlspecialchars($success) ?>
-</div>
-<?php } ?>
-
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Register Aplikasi</title>
@@ -40,37 +27,36 @@ if ($error) {
         </h2>
 
         <!-- Alert Error -->
-        <?php if(isset($_SESSION['error'])) { ?>
+        <?php if ($error) { ?>
             <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
-                <?= $_SESSION['error']; ?>
+                <?= htmlspecialchars($error) ?>
             </div>
-        <?php unset($_SESSION['error']); } ?>
+        <?php } ?>
+
+        <!-- Alert Success -->
+        <?php if ($success) { ?>
+            <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm">
+                <?= htmlspecialchars($success) ?>
+            </div>
+        <?php } ?>
 
         <!-- Form -->
         <form action="process/prosesRegister.php" method="POST">
-            
+
             <!-- Nama -->
             <div class="mb-4">
                 <label class="block text-gray-700 mb-1">Nama Lengkap</label>
-                <input 
-                    type="text" 
-                    name="nama" 
-                    placeholder="Masukkan nama lengkap"
+                <input type="text" name="nama" placeholder="Masukkan nama lengkap"
                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                    required
-                >
+                    required>
             </div>
 
             <!-- Email -->
             <div class="mb-4">
                 <label class="block text-gray-700 mb-1">Alamat Email</label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="Masukkan email"
+                <input type="email" name="email" placeholder="Masukkan email"
                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                    required
-                >
+                    required>
             </div>
 
             <!-- Password -->
@@ -78,38 +64,28 @@ if ($error) {
                 <label class="block text-gray-700 mb-1">Password</label>
 
                 <div class="relative">
-                    <input 
-                        type="password" 
-                        id="password"
-                        name="password" 
-                        placeholder="Buat password"
+                    <input type="password" id="password" name="password" placeholder="Buat password"
                         class="w-full px-4 py-2 border rounded-lg pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                        required
-                    >
+                        required>
 
                     <!-- Icon mata -->
-                    <button 
-                        type="button" 
-                        onclick="togglePassword()" 
-                        class="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
-                    >
+                    <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700">
                         👁
                     </button>
                 </div>
             </div>
 
             <!-- Button -->
-            <button 
-                type="submit" 
-                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 shadow-md"
-            >
+            <button type="submit"
+                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 shadow-md">
                 Daftar Sekarang
             </button>
         </form>
 
         <!-- Footer -->
         <div class="text-center text-sm text-gray-600 mt-6">
-            Sudah punya akun? 
+            Sudah punya akun?
             <a href="login.php" class="text-blue-600 hover:underline font-medium">
                 Login di sini
             </a>
@@ -130,4 +106,5 @@ if ($error) {
         }
     </script>
 </body>
+
 </html>
