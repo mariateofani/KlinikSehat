@@ -1,4 +1,30 @@
-<?php session_start(); ?>
+<?php
+$success = $_COOKIE['success'] ?? null;
+$error = $_COOKIE['error'] ?? null;
+
+if ($success) {
+    setcookie("success", "", time() - 3600, "/");
+}
+
+if ($error) {
+    setcookie("error", "", time() - 3600, "/");
+}
+?>
+
+<!-- Success -->
+<?php if($success) { ?>
+<div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm">
+    <?= htmlspecialchars($success) ?>
+</div>
+<?php } ?>
+
+<!-- Error -->
+<?php if($error) { ?>
+<div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
+    <?= htmlspecialchars($error) ?>
+</div>
+<?php } ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -33,7 +59,7 @@
         <?php unset($_SESSION['error']); } ?>
 
         <!-- Form -->
-        <form action="process/prosesLogin.php" method="POST" onsubmit="return validateForm()">
+        <form action="process/prosesLogin.php" method="POST">
 
             <!-- Email -->
             <div class="mb-4">

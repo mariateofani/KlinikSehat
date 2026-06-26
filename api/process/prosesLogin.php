@@ -1,64 +1,134 @@
 <?php
 ob_start();
-session_start();
-
 require_once __DIR__ . '/../service/koneksi.php';
 
-$email = $_POST['email'] ?? '';
-$password = $_POST['password'] ?? '';
+$stmt = mysqli_prepare(
+    $koneksi,
+    "SELECT * FROM users WHERE email=?"
+);
 
-$stmt = $koneksi->prepare("SELECT * FROM users WHERE email=?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
+mysqli_stmt_bind_param(
+    $stmt,
+    "s",
+    $email
+);
 
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+mysqli_stmt_execute($stmt);
+
+$result =
+    mysqli_stmt_get_result(
+        $stmt
+    );
+
+$user =
+    mysqli_fetch_assoc(
+        $result
+    );
+
+function flash($name, $value)
+{
+
+    setcookie(
+        $name,
+        $value,
+        [
+            'expires' => time() + 5,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => false,
+            'samesite' => 'None'
+        ]
+    );
+
+}
+
+function loginCookie($name, $value)
+{
+
+    setcookie(
+        $name,
+        $value,
+        [
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+        ]
+    );
+
+}
 
 if ($user) {
 
-    if (password_verify($password, $user['password'])) {
+    if (
+        password_verify(
+            $password,
+            $user['password']
+        )
+    ) {
 
-        $role = $user['role'] ?? 'user';
+        loginCookie(
+            "email",
+            $user['email']
+        );
 
-        // COOKIE LOGIN
-        $cookie_opts = [
-            'expires'  => time() + 3600,
-            'path'     => '/',
-            'secure'   => false, // ubah true kalau sudah HTTPS
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ];
+        loginCookie(
+            "nama",
+            $user['nama']
+        );
 
-        setcookie("email", $user['email'], $cookie_opts);
-        setcookie("nama", $user['nama'], $cookie_opts);
-        setcookie("role", $role, $cookie_opts);
+        loginCookie(
+            "role",
+            $user['role']
+        );
 
-        // hapus pesan lama
-        unset($_SESSION['error']);
-        unset($_SESSION['success']);
+        if (
+            $user['role']
+            === "admin"
+        ) {
 
-        // redirect sesuai role
-        if ($role === 'admin') {
-            header("Location: ../dashboard_admin.php");
-        } elseif ($role === 'manager') {
-            header("Location: ../dashboard_manager.php");
+            header(
+                "Location: ../dashboard_admin.php"
+            );
+
         } else {
-            header("Location: ../dashboard.php");
+
+            header(
+                "Location: ../dashboard.php"
+            );
+
         }
 
         exit;
 
     } else {
 
-        $_SESSION['error'] = "Password salah!";
-        header("Location: ../login.php");
+        flash(
+            "error",
+            "Password salah!"
+        );
+
+        header(
+            "Location: ../login.php"
+        );
+
         exit;
+
     }
 
 } else {
 
-    $_SESSION['error'] = "Email tidak ditemukan!";
-    header("Location: ../login.php");
+    flash(
+        "error",
+        "Email tidak ditemukan!"
+    );
+
+    header(
+        "Location: ../login.php"
+    );
+
     exit;
+
 }
 ?>

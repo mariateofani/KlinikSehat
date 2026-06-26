@@ -1,6 +1,18 @@
-<?php  
-session_start(); 
+<?php
+$error = $_COOKIE['error'] ?? null;
+
+if ($error) {
+    setcookie("error", "", time() - 3600, "/");
+}
 ?>
+
+<!-- Alert Error -->
+<?php if($error) { ?>
+<div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
+    <?= htmlspecialchars($error) ?>
+</div>
+<?php } ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -28,7 +40,7 @@ session_start();
         <?php unset($_SESSION['error']); } ?>
 
         <!-- Form -->
-        <form action="process/prosesRegister.php" method="POST" onsubmit="return validateForm()">
+        <form action="process/prosesRegister.php" method="POST">
             
             <!-- Nama -->
             <div class="mb-4">
