@@ -1,15 +1,18 @@
 <?php
 ob_start();
+session_start();
+
 require_once __DIR__ . '/../service/koneksi.php';
 
-$email    = $_POST['email'];
-$password = $_POST['password'];
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
 
 $stmt = $koneksi->prepare("SELECT * FROM users WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
+
 $result = $stmt->get_result();
-$user   = $result->fetch_assoc();
+$user = $result->fetch_assoc();
 
 if ($user) {
 
@@ -17,20 +20,24 @@ if ($user) {
 
         $role = $user['role'] ?? 'user';
 
-        // 🔐 SET COOKIE LOGIN
+        // COOKIE LOGIN
         $cookie_opts = [
             'expires'  => time() + 3600,
             'path'     => '/',
-            'secure'   => true,
+            'secure'   => false, // ubah true kalau sudah HTTPS
             'httponly' => true,
-            'samesite' => 'None'
+            'samesite' => 'Lax'
         ];
 
         setcookie("email", $user['email'], $cookie_opts);
-        setcookie("nama",  $user['nama'],  $cookie_opts);
-        setcookie("role",  $role,          $cookie_opts);
+        setcookie("nama", $user['nama'], $cookie_opts);
+        setcookie("role", $role, $cookie_opts);
 
-        // 🔀 REDIRECT BERDASARKAN ROLE
+        // hapus pesan lama
+        unset($_SESSION['error']);
+        unset($_SESSION['success']);
+
+        // redirect sesuai role
         if ($role === 'admin') {
             header("Location: ../dashboard_admin.php");
         } elseif ($role === 'manager') {
@@ -38,16 +45,19 @@ if ($user) {
         } else {
             header("Location: ../dashboard.php");
         }
+
         exit;
 
     } else {
-        setcookie("error", "Password salah!", time() + 5, "/");
+
+        $_SESSION['error'] = "Password salah!";
         header("Location: ../login.php");
         exit;
     }
 
 } else {
-    setcookie("error", "Email tidak ditemukan!", time() + 5, "/");
+
+    $_SESSION['error'] = "Email tidak ditemukan!";
     header("Location: ../login.php");
     exit;
 }
