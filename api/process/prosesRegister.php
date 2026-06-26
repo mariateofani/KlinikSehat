@@ -5,10 +5,14 @@ ob_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
 $nama =
-    $_POST['nama'] ?? '';
+    trim(
+        $_POST['nama'] ?? ''
+    );
 
 $email =
-    $_POST['email'] ?? '';
+    trim(
+        $_POST['email'] ?? ''
+    );
 
 $password =
     $_POST['password'] ?? '';
@@ -24,9 +28,9 @@ function flash(
         [
             'expires' => time() + 5,
             'path' => '/',
-            'secure' => true,
+            'secure' => false, // ubah saat localhost
             'httponly' => false,
-            'samesite' => 'None'
+            'samesite' => 'Lax'
         ]
     );
 
@@ -43,6 +47,26 @@ if (
     flash(
         "error",
         "Semua field wajib diisi!"
+    );
+
+    header(
+        "Location: ../register.php"
+    );
+
+    exit;
+
+}
+
+if (
+    !filter_var(
+        $email,
+        FILTER_VALIDATE_EMAIL
+    )
+) {
+
+    flash(
+        "error",
+        "Format email tidak valid!"
     );
 
     header(
@@ -77,8 +101,7 @@ $cek->execute();
 $cek->store_result();
 
 if (
-    $cek->num_rows
-    > 0
+    $cek->num_rows > 0
 ) {
 
     flash(
@@ -96,8 +119,10 @@ if (
 
 $stmt =
     $koneksi->prepare(
-        "INSERT INTO users (nama,email,password,role)
-VALUES (?,?,?,?)"
+        "INSERT INTO users
+        (nama,email,password,role)
+        VALUES
+        (?,?,?,?)"
     );
 
 $stmt->bind_param(
