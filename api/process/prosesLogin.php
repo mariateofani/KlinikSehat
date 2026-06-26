@@ -1,130 +1,54 @@
 <?php
-
 ob_start();
-session_start();
-
 require_once __DIR__ . '/../service/koneksi.php';
 
-/* ambil data form */
-$email =
-    trim(
-        $_POST['email'] ?? ''
-    );
+$email    = $_POST['email'];
+$password = $_POST['password'];
 
-$password =
-    $_POST['password'] ?? '';
+$stmt = $koneksi->prepare("SELECT * FROM users WHERE email=?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$user   = $result->fetch_assoc();
 
-function flash($name, $value)
-{
-    setcookie(
-        $name,
-        $value,
-        [
-            'expires' => time() + 5,
-            'path' => '/',
-            'secure' => false, // localhost
-            'httponly' => false,
-            'samesite' => 'Lax'
-        ]
-    );
-}
+if ($user) {
 
-/* validasi */
-if (
-    empty($email)
-    ||
-    empty($password)
-) {
+    if (password_verify($password, $user['password'])) {
 
-    flash(
-        "error",
-        "Email dan password wajib diisi!"
-    );
+        $role = $user['role'] ?? 'user';
 
-    header(
-        "Location: ../login.php"
-    );
+        // 🔐 SET COOKIE LOGIN
+        $cookie_opts = [
+            'expires'  => time() + 3600,
+            'path'     => '/',
+            'secure'   => true,
+            'httponly' => true,
+            'samesite' => 'None'
+        ];
 
-    exit;
-}
+        setcookie("email", $user['email'], $cookie_opts);
+        setcookie("nama",  $user['nama'],  $cookie_opts);
+        setcookie("role",  $role,          $cookie_opts);
 
-/* cari user */
-$stmt =
-    mysqli_prepare(
-        $koneksi,
-        "SELECT * FROM users WHERE email=?"
-    );
-
-mysqli_stmt_bind_param(
-    $stmt,
-    "s",
-    $email
-);
-
-mysqli_stmt_execute(
-    $stmt
-);
-
-$result =
-    mysqli_stmt_get_result(
-        $stmt
-    );
-
-$user =
-    mysqli_fetch_assoc(
-        $result
-    );
-
-/* cek login */
-if (
-    $user
-    &&
-    password_verify(
-        $password,
-        $user['password']
-    )
-) {
-
-    // tetap pakai session
-    $_SESSION['email'] =
-        $user['email'];
-
-    $_SESSION['nama'] =
-        $user['nama'];
-
-    $_SESSION['role'] =
-        $user['role'];
-
-    if (
-        $user['role']
-        === 'admin'
-    ) {
-
-        header(
-            "Location: ../dashboard_admin.php"
-        );
+        // 🔀 REDIRECT BERDASARKAN ROLE
+        if ($role === 'admin') {
+            header("Location: ../dashboard_admin.php");
+        } elseif ($role === 'manager') {
+            header("Location: ../dashboard_manager.php");
+        } else {
+            header("Location: ../dashboard.php");
+        }
+        exit;
 
     } else {
-
-        header(
-            "Location: ../dashboard.php"
-        );
-
+        setcookie("error", "Password salah!", time() + 5, "/");
+        header("Location: ../login.php");
+        exit;
     }
 
+} else {
+    setcookie("error", "Email tidak ditemukan!", time() + 5, "/");
+    header("Location: ../login.php");
     exit;
-
 }
-
-flash(
-    "error",
-    $user
-        ? "Password salah!"
-        : "Email tidak ditemukan!"
-);
-
-header(
-    "Location: ../login.php"
-);
-
-exit;
+?>
