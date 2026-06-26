@@ -13,14 +13,14 @@ if ($error) {
 
 <!-- Success -->
 <?php if($success) { ?>
-<div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm">
+<div class="w-full bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-lg mb-5 text-sm text-center">
     <?= htmlspecialchars($success) ?>
 </div>
 <?php } ?>
 
 <!-- Error -->
 <?php if($error) { ?>
-<div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
+<div class="w-full bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm text-center">
     <?= htmlspecialchars($error) ?>
 </div>
 <?php } ?>
