@@ -2,14 +2,14 @@
 ob_start();
 require_once __DIR__ . '/../service/koneksi.php';
 
-$email    = $_POST['email'];
+$email = $_POST['email'];
 $password = $_POST['password'];
 
 $stmt = $koneksi->prepare("SELECT * FROM users WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
-$user   = $result->fetch_assoc();
+$user = $result->fetch_assoc();
 
 if ($user) {
 
@@ -19,16 +19,16 @@ if ($user) {
 
         // 🔐 SET COOKIE LOGIN
         $cookie_opts = [
-            'expires'  => time() + 3600,
-            'path'     => '/',
-            'secure'   => true,
+            'expires' => time() + 3600,
+            'path' => '/',
+            'secure' => false,
             'httponly' => true,
-            'samesite' => 'None'
+            'samesite' => 'Lax'
         ];
 
         setcookie("email", $user['email'], $cookie_opts);
-        setcookie("nama",  $user['nama'],  $cookie_opts);
-        setcookie("role",  $role,          $cookie_opts);
+        setcookie("nama", $user['nama'], $cookie_opts);
+        setcookie("role", $role, $cookie_opts);
 
         // 🔀 REDIRECT BERDASARKAN ROLE
         if ($role === 'admin') {

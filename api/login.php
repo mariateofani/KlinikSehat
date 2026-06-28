@@ -1,7 +1,9 @@
 <?php
+
 $success = $_COOKIE['success'] ?? null;
 $error = $_COOKIE['error'] ?? null;
 
+// Hapus flash message setelah ditampilkan
 if ($success) {
     setcookie("success", "", time() - 3600, "/");
 }
@@ -9,6 +11,7 @@ if ($success) {
 if ($error) {
     setcookie("error", "", time() - 3600, "/");
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -32,18 +35,18 @@ if ($error) {
         </h2>
 
         <!-- Success -->
-        <?php if ($success) { ?>
+        <?php if (!empty($success)) : ?>
             <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm">
                 <?= htmlspecialchars($success) ?>
             </div>
-        <?php } ?>
+        <?php endif; ?>
 
         <!-- Error -->
-        <?php if ($error) { ?>
+        <?php if (!empty($error)) : ?>
             <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
                 <?= htmlspecialchars($error) ?>
             </div>
-        <?php } ?>
+        <?php endif; ?>
 
         <!-- Form -->
         <form action="process/prosesLogin.php" method="POST">
