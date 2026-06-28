@@ -58,19 +58,21 @@ $stmt_chk->execute();
 $res_chk = $stmt_chk->get_result()->fetch_assoc();
 // (opsional info saja)
 ?>
-<?php if (isset($_COOKIE['success'])) { ?>
-    <div id="alert-success" style="position:fixed;top:20px;right:20px;z-index:9999;"
+<?php if (!empty($success)) { ?>
+    <div id="alert-success"
+         style="position:fixed;top:20px;right:20px;z-index:9999;"
          class="bg-green-500 text-white px-5 py-3 rounded-lg shadow-lg">
-        <?= htmlspecialchars($_COOKIE['success']); ?>
+        <?= htmlspecialchars($success); ?>
     </div>
-<?php setcookie("success", "", time() - 3600, "/"); } ?>
+<?php } ?>
 
-<?php if (isset($_COOKIE['error'])) { ?>
-    <div id="alert-error" style="position:fixed;top:20px;right:20px;z-index:9999;"
+<?php if (!empty($error)) { ?>
+    <div id="alert-error"
+         style="position:fixed;top:20px;right:20px;z-index:9999;"
          class="bg-red-500 text-white px-5 py-3 rounded-lg shadow-lg">
-        <?= htmlspecialchars($_COOKIE['error']); ?>
+        <?= htmlspecialchars($error); ?>
     </div>
-<?php setcookie("error", "", time() - 3600, "/"); } ?>
+<?php } ?>
 
 <!DOCTYPE html>
 <html lang="id">
